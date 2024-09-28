@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
+// import handleGetBalance from '../utils/handleBalance';
 
-const useWalletConnection = () => {
+const useWalletConnexion = () => {
   const [account, setAccount] = useState(null);
   const [chainId, setChainId] = useState(null);
   const [provider, setProvider] = useState(null);
@@ -61,12 +62,16 @@ const useWalletConnection = () => {
       };
 
       provider.on('accountsChanged', handleAccountsChanged);
+      // provider.on('accountsChanged', handleGetBalance);
       provider.on('chainChanged', handleChainChanged);
+      // provider.on('chainChanged', handleGetBalance);
       provider.on('disconnect', handleDisconnect);
 
       return () => {
         provider.removeListener('accountsChanged', handleAccountsChanged);
+        // provider.removeListener('accountsChanged', getBalance);
         provider.removeListener('chainChanged', handleChainChanged);
+        // provider.removeListener('chainChanged', getBalance);
         provider.removeListener('disconnect', handleDisconnect);
       };
     }
@@ -81,4 +86,4 @@ const useWalletConnection = () => {
   };
 };
 
-export default useWalletConnection;
+export default useWalletConnexion;
