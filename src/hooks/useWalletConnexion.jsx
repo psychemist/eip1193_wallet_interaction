@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-// import handleGetBalance from '../utils/handleBalance';
+import { ethers } from 'ethers';
 
 const useWalletConnexion = () => {
   const [account, setAccount] = useState(null);
@@ -32,50 +32,57 @@ const useWalletConnexion = () => {
 
   const getBalance = useCallback(async (address) => {
     if (provider) {
-      try {
-        const balance = await provider.request({
-          method: 'eth_getBalance',
-          params: [address, 'latest'],
-        });
-        return parseInt(balance, 16) / 1e18; // Convert from Wei to Ether
-        // return ethers.parseUnits(balance, 16) / 1e18; // Convert from Wei to Ether
-      } catch (error) {
-        console.error('Failed to get address balance:', error);
+      if (!!ethers.isAddress(address)) {
+        try {
+          const bal = await provider.request({
+            method: 'eth_getBalance',
+            params: [address, 'latest'],
+          });
+          console.log(bal)
+          return parseInt(bal, 16) / 1e18;
+          // return ethers.parseUnits(bal.toString(), 18);
+        } catch (error) {
+          console.error('Failed to get address balance:', error);
+          return null;
+        }
+      } else {
         return null;
       }
     }
     return null;
   }, [provider]);
 
+  const handleAccountsChanged = (accounts) => {
+    setAccount(accounts[0] || null);
+  };
+
+  const handleChainChanged = (chainId) => {
+    setChainId(chainId);
+  };
+
+  const handleDisconnect = () => {
+    disconnectWallet();
+  };
+
   useEffect(() => {
-    if (provider) {
-      const handleAccountsChanged = (accounts) => {
-        setAccount(accounts[0] || null);
-      };
+    if (typeof window.ethereum !== 'undefined') {
+      const ethereum = window.ethereum;
+      setProvider(ethereum);
 
-      const handleChainChanged = (chainId) => {
-        setChainId(chainId);
-      };
+      ethereum.on('accountsChanged', handleAccountsChanged);
+      // ethereum.on('accountsChanged', handleDisconnect);
+      ethereum.on('chainChanged', handleChainChanged);
+      // ethereum.on('disconnect', handleDisconnect);
 
-      const handleDisconnect = () => {
-        disconnectWallet();
-      };
-
-      provider.on('accountsChanged', handleAccountsChanged);
-      // provider.on('accountsChanged', handleGetBalance);
-      provider.on('chainChanged', handleChainChanged);
-      // provider.on('chainChanged', handleGetBalance);
-      provider.on('disconnect', handleDisconnect);
-
+      // Cleanup listeners on unmount
       return () => {
-        provider.removeListener('accountsChanged', handleAccountsChanged);
-        // provider.removeListener('accountsChanged', getBalance);
-        provider.removeListener('chainChanged', handleChainChanged);
-        // provider.removeListener('chainChanged', getBalance);
-        provider.removeListener('disconnect', handleDisconnect);
+        ethereum.removeListener('accountsChanged', handleAccountsChanged);
+        // ethereum.removeListener('accountsChanged', handleDisconnect);
+        ethereum.removeListener('chainChanged', handleChainChanged);
+        // ethereum.removeListener('disconnect', handleDisconnect);
       };
     }
-  }, [provider, disconnectWallet]);
+  }, [disconnectWallet]);
 
   return {
     account,
