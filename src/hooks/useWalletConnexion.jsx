@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { ethers } from 'ethers';
+// import { ethers } from 'ethers';
 
 const useWalletConnexion = () => {
   const [account, setAccount] = useState(null);
