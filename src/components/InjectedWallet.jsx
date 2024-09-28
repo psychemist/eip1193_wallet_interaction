@@ -27,22 +27,23 @@ export default function InjectedWallet() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-teal-500 to-purple-600 flex items-center justify-center px-4 py-12">
       <div className="bg-white rounded-lg shadow-xl p-8 max-w-md w-full">
-        <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">Custom Wallet Connection</h1>
+        <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">Custom Wallet Connexion</h1>
 
         {account ? (
           <div className="mb-6">
-            <p className="text-sm font-medium text-gray-600 mb-2">Connected Account:</p>
+            <p className="text-sm font-medium text-black mb-2">Connected Account:</p>
             <p className="bg-gray-100 rounded p-2 break-all text-gray-800">{account}</p>
-            <p className="text-sm font-medium text-gray-600 mt-4 mb-2">Chain ID:</p>
-            <p className="bg-gray-100 rounded p-2 text-gray-800">{chainId}</p>
+            <p className="text-sm font-medium text-black mt-4 mb-2">Chain ID:</p>
+            <p className="bg-gray-100 rounded p-2 text-gray-800">{parseInt(chainId)}</p>
             <button
               onClick={() => {
                 disconnectWallet();
                 setAddressInput("");
                 setBalance(0);
               }}
+              // onClick={disconnectWallet}
               className="mt-4 w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-200"
             >
               Disconnect Wallet
@@ -62,6 +63,7 @@ export default function InjectedWallet() {
             type="text"
             value={addressInput}
             onChange={(e) => handleAddressChange(e)}
+            // onChange={handleAddressChange}
             placeholder="Enter wallet address"
             className="w-full p-2 border border-gray-300 rounded mb-2"
           />
